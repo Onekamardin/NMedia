@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,16 +18,37 @@
 
     <TextView
         android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:text="Нетология. Университет интернет проф..."
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Нетология. Университет интернет проф...
-                 21 мая в 18:36"
+        android:paddingStart="16dp"
+        android:text="21 мая в 18:36"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/icon"
+        app:layout_constraintEnd_toEndOf="@+id/text"
         app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toTopOf="@+id/icon" />
+        app:layout_constraintTop_toBottomOf="@id/text" />
 
+    <ImageButton
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/text"
+        app:layout_constraintTop_toTopOf="@id/icon"
+        app:srcCompat="@drawable/ic_more_vert_24" />
 
 
     <TextView
@@ -45,68 +66,63 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/textViewMessage"
-        app:layout_constraintStart_toStartOf="@+id/textViewMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewMessage">
 
         <ImageView
-            android:id="@+id/imageViewLikes"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:id="@+id/ivLike"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:src="@drawable/ic_heart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewLikesCount"
+            android:id="@+id/tvLikeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="4dp"
+            android:paddingLeft="4dp"
             android:text="10"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/imageViewLikes"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/ivLike"
+            app:layout_constraintTop_toTopOf="@id/ivLike" />
 
         <ImageView
-            android:id="@+id/imageViewShares"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:id="@+id/ivShare"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="16dp"
             android:src="@drawable/ic_share"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintStart_toEndOf="@id/textViewLikesCount"
+            app:layout_constraintStart_toEndOf="@id/tvLikeCount"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewSharesCount"
+            android:id="@+id/tvShareCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="4dp"
             android:text="5"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/imageViewShares"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/ivShare"
+            app:layout_constraintTop_toTopOf="@id/ivShare" />
 
         <ImageView
-            android:id="@+id/imageViewViews"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="220dp"
+            android:id="@+id/ivViews"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="16dp"
             android:src="@drawable/ic_eye"
-            app:layout_constraintStart_toEndOf="@id/textViewSharesCount"
+            app:layout_constraintStart_toEndOf="@id/tvShareCount"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewViewsCount"
+            android:id="@+id/tvViewsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
+            android:paddingLeft="4dp"
             android:text="5"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/imageViewViews"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/ivViews"
+            app:layout_constraintTop_toTopOf="@id/ivViews" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
