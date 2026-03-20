@@ -63,8 +63,9 @@
         app:layout_constraintTop_toBottomOf="@+id/icon" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="3dp"
         android:paddingTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +112,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="16dp"
             android:src="@drawable/ic_eye"
-            app:layout_constraintStart_toEndOf="@id/tvShareCount"
+            app:layout_constraintEnd_toStartOf="@id/tvViewsCount"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -120,7 +121,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="4dp"
             android:text="5"
-            app:layout_constraintStart_toEndOf="@id/ivViews"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ivViews" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
