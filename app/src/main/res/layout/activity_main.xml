@@ -9,34 +9,36 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_margin="4dp"
         android:src="@mipmap/ic_launcher_round"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
+        android:id="@+id/author"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:paddingTop="16dp"
         android:text="Нетология. Университет интернет проф..."
-        android:textSize="16sp"
+        android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/menu"/>
 
     <TextView
-        android:id="@+id/text2"
+        android:id="@+id/published"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:text="21 мая в 18:36"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/text"
+        app:layout_constraintEnd_toEndOf="@+id/author"
         app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toBottomOf="@id/text" />
+        app:layout_constraintTop_toBottomOf="@id/author" />
 
     <ImageButton
         android:id="@+id/menu"
@@ -46,13 +48,13 @@
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/text"
+        app:layout_constraintStart_toEndOf="@+id/author"
         app:layout_constraintTop_toTopOf="@id/icon"
         app:srcCompat="@drawable/ic_more_vert_24" />
 
 
     <TextView
-        android:id="@+id/textViewMessage"
+        android:id="@+id/content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -65,11 +67,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
+        android:layout_margin="5dp"
         android:paddingTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewMessage">
+        app:layout_constraintTop_toBottomOf="@+id/content">
 
         <ImageView
             android:id="@+id/ivLike"
