@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             "Нетология. Университет интернет проф...",
             "21 мая в 18:36",
             "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов. Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия — помочь встать на путь роста и начать цепочку перемен.",
-            shareCount = 1205,
+            shareCount = 1140,
             likes = 1000,
             likedByMe = true
         )
@@ -62,14 +62,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun formatCount(count: Int): String {
-        return when {
-            count < 1000 -> count.toString()
-            count < 10_000 -> String.format("%.1fK", count / 1000f).replace(".0K", "K")
-            count < 1_000_000 -> "${count / 1000}K"
-            count < 10_000_000 -> String.format("%.1fM", count / 1_000_000f).replace(".0M", "M")
-            else -> "${count / 1_000_000}M"
-        }
+    private fun formatCount(count: Int): String = when {
+        count < 1000 -> "$count"
+        count < 10_000 -> "${count / 1000}.${(count % 1000) / 100}K".replace(".0K", "K")
+        count < 1_000_000 -> "${count / 1000}K"
+        count < 10_000_000 -> "${count / 1_000_000}.${(count % 1_000_000) / 100_000}M".replace(".0M", "M")
+        else -> "${count / 1_000_000}M"
     }
+
+
 
 }
