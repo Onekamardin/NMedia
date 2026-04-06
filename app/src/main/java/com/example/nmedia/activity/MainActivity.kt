@@ -1,12 +1,14 @@
 package com.example.nmedia.activity
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import com.example.nmedia.R
 import com.example.nmedia.adapter.PostListener
 import com.example.nmedia.adapter.PostsAdapter
@@ -28,28 +30,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         val viewModel by viewModels<PostViewModel>()
-        val adapter = PostsAdapter(
-            object : PostListener {
-                override fun onLike(post: Post) {
-                    viewModel.likeById(post.id)
-                }
+        val adapter = PostsAdapter(object : PostListener {
+            override fun onLike(post: Post) = viewModel.likeById(post.id)
+            override fun onShare(post: Post) = viewModel.repostById(post.id)
+            override fun onRemove(post: Post) = viewModel.removeById(post.id)
+            override fun onEdit(post: Post) {
+                viewModel.edit(post)
+                binding.content.setText(post.content)
+            }
+        })
 
-                override fun onShare(post: Post) {
-                    viewModel.repostById(post.id)
-                }
-
-                override fun onRemove(post: Post) {
-                    viewModel.removeById(post.id)
-                }
-
-                override fun onEdit(post: Post) {
-                    viewModel.edit(post)
-                }
-
-            })
         binding.recyclerView.adapter = adapter
+
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
+        }
+        viewModel.isEditing.observe(this, Observer { isEditing ->
+            if (isEditing) {
+                binding.editControls.visibility = View.VISIBLE
+                binding.content.visibility = View.VISIBLE
+                binding.save.visibility = View.VISIBLE
+            } else {
+
+                binding.editControls.visibility = View.GONE
+                binding.content.visibility = View.VISIBLE
+                binding.save.visibility = View.VISIBLE
+            }
+        })
+        viewModel.editedPost.observe(this) { post ->
+            if (post != null) {
+                binding.content.setText(post.content)
+            } else {
+                binding.content.setText("")
+            }
+        }
+        binding.cancelEdit.setOnClickListener {
+            viewModel.cancelEditing()
+            binding.content.setText("")
         }
         binding.save.setOnClickListener {
             val content = binding.content.text?.toString().orEmpty()

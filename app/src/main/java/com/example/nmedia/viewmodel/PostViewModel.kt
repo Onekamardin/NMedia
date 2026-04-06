@@ -1,5 +1,6 @@
 package com.example.nmedia.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.nmedia.dto.Post
@@ -12,6 +13,21 @@ private val empty = Post()
 class PostViewModel : ViewModel() {
 
 
+    private val _isEditing = MutableLiveData<Boolean>(false)
+    val isEditing: LiveData<Boolean> = _isEditing
+
+    private val _editedPost = MutableLiveData<Post?>(null)
+    val editedPost: LiveData<Post?> = _editedPost
+    fun startEditing() {
+        _isEditing.value = true
+    }
+
+    fun cancelEditing() {
+        _isEditing.value = false
+        _editedPost.value = null
+    }
+
+
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
     fun likeById(id: Long) = repository.likeById(id)
@@ -20,17 +36,23 @@ class PostViewModel : ViewModel() {
 
     val edited = MutableLiveData(empty)
     fun saveContent(content: String) {
-        edited.value?.let { post ->
-            val trimmed = content.trim()
-            if (post.content != trimmed) {
-                repository.save(post.copy(content = trimmed))
-            }
-            edited.value = empty
+        val currentPost = _editedPost.value
+
+        if (currentPost != null) {
+
+            val updatedPost = currentPost.copy(content = content.trim())
+            repository.save(updatedPost)
+        } else {
+            val newPost = Post()
+            repository.save(newPost)
         }
+
+        cancelEditing()
     }
 
     fun edit(post: Post) {
-        edited.value = post
+        _editedPost.value = post
+        _isEditing.value = true
     }
 
 }
