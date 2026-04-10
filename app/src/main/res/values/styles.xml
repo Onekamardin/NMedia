@@ -7,7 +7,7 @@
     <style name="Widget.AppTheme.LikeButton" parent="Widget.Material3.Button.TextButton.Icon">
         <item name="buttonTint">@color/like_color_selector</item>
     </style>
-    Widget.Material3.Button.TextButton.Icon
+
 
 
 </resources>
