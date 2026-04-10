@@ -61,13 +61,10 @@ class PostsViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            tvLikeCount.text = formatCount(post.likes)
+            //tvLikeCount.text = formatCount(post.likes)
             tvShareCount.text = formatCount(post.shareCount)
-            ivLike.setImageResource(
-                if (post.likedByMe) {
-                    R.drawable.ic_liked_24
-                } else R.drawable.ic_heart
-            )
+            ivLike.isChecked = post.likedByMe
+            ivLike.text = formatCount(post.likes)
             binding.ivLike.setOnClickListener {
                 listener.onLike(post)
             }
