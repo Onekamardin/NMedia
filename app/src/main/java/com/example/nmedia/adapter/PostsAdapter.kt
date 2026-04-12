@@ -62,7 +62,8 @@ class PostsViewHolder(
             published.text = post.published
             content.text = post.content
             //tvLikeCount.text = formatCount(post.likes)
-            tvShareCount.text = formatCount(post.shareCount)
+           // tvShareCount.text = formatCount(post.shareCount)
+            ivShare.text = formatCount(post.shareCount)
             ivLike.isChecked = post.likedByMe
             ivLike.text = formatCount(post.likes)
             binding.ivLike.setOnClickListener {
