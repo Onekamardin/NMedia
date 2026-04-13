@@ -1,5 +1,6 @@
 package com.example.nmedia.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,7 @@ class PostViewModel : ViewModel() {
         _isEditing.value = true
     }
 
-    fun cancelEditing() {
+    private fun cancelEditing() {
         _isEditing.value = false
         _editedPost.value = null
     }
@@ -35,20 +36,23 @@ class PostViewModel : ViewModel() {
     fun removeById(id: Long) = repository.removeById(id)
 
     val edited = MutableLiveData(empty)
-    fun saveContent(content: String) {
-        val currentPost = _editedPost.value
 
-        if (currentPost != null) {
-
-            val updatedPost = currentPost.copy(content = content.trim())
-            repository.save(updatedPost)
-        } else {
-            val newPost = Post()
+    fun saveContent(content: String, postId: Long = 0L) {
+        if (postId == 0L) {
+            val newPost = Post(content = content.trim())
             repository.save(newPost)
+        } else {
+            try {
+                val existingPost = repository.getById(postId)
+                val updatedPost = existingPost.copy(content = content.trim())
+                repository.save(updatedPost)
+            } catch (e: Exception) {
+                Log.e("PostViewModel", "Пост с ID $postId не найден", e)
+            }
         }
-
         cancelEditing()
     }
+
 
     fun edit(post: Post) {
         _editedPost.value = post
