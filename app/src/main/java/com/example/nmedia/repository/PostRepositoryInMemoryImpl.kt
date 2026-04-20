@@ -24,6 +24,13 @@ class PostRepositoryInMemoryImpl : PostRepository {
             shareCount = 500,
             likes = 1000,
             likedByMe = true
+        ),
+        Post(
+            id = 3,
+            author = "Автор",
+            published = "Сегодня",
+            content = "Пост с видео!",
+            video = "https://rutube.ru/video/6550a91e7e523f9503bed47e4c46d0cb"
         )
     )
     private var nextId = posts.first().id + 1
@@ -71,4 +78,10 @@ class PostRepositoryInMemoryImpl : PostRepository {
         }
         data.value = posts
     }
+
+    override fun getById(postId: Long): Post {
+        return posts.firstOrNull { it.id == postId }
+            ?: throw NoSuchElementException("Пост с ID $postId не найден")
+    }
+
 }

@@ -6,4 +6,6 @@
     <string name="post_text" translatable="false">Post text</string>
     <string name="content_is_blank" translatable="false">Content is blank</string>
     <string name="edit" translatable="false">Edit</string>
+    <string name="error_empty" translatable="false">Content can\'t be empty</string>
+    <string name="ok" translatable="false">OK</string>
 </resources>

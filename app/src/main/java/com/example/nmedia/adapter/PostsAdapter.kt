@@ -1,8 +1,12 @@
 package com.example.nmedia.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -61,8 +65,17 @@ class PostsViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            //tvLikeCount.text = formatCount(post.likes)
-           // tvShareCount.text = formatCount(post.shareCount)
+            if (!post.video.isNullOrBlank()) {
+                videoContainer.visibility = View.VISIBLE
+                videoContainer.setOnClickListener {
+                    openVideo(post.video!!)
+                }
+                playButton.setOnClickListener {
+                    openVideo(post.video!!)
+                }
+            } else {
+                videoContainer.visibility = View.GONE
+            }
             ivShare.text = formatCount(post.shareCount)
             ivLike.isChecked = post.likedByMe
             ivLike.text = formatCount(post.likes)
@@ -92,6 +105,30 @@ class PostsViewHolder(
                     }
                 }.show()
             }
+        }
+    }
+
+    private fun openVideo(videoUrl: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = videoUrl.toUri()
+            }
+
+            if (intent.resolveActivity(binding.root.context.packageManager) != null) {
+                binding.root.context.startActivity(intent)
+            } else {
+                Toast.makeText(
+                    (binding.root.context),
+                    "Не найдено приложение для открытия видео",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(
+                (binding.root.context), "Ошибка открытия видео: ${e.message}", Toast.LENGTH_SHORT
+            )
+                .show()
         }
     }
 }
