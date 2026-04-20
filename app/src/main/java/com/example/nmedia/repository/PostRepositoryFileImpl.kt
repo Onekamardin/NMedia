@@ -56,19 +56,46 @@ class PostRepositoryFileImpl(private val context: Context) : PostRepository {
         if (post.id == 0L) {
             posts = listOf(post.copy(id = nextId++, author = "Me", published = "Now")) + posts
         } else {
-            posts = posts.map {
-                if (it.id == post.id) {
-                    it.copy(content = post.content)
-                } else it
+            posts = posts.map { existingPost ->
+                if (existingPost.id == post.id) {
+                    post.copy(
+                        author = existingPost.author,
+                        published = existingPost.published,
+                        likes = existingPost.likes,
+                        likedByMe = existingPost.likedByMe,
+                        shareCount = existingPost.shareCount,
+                        video = existingPost.video
+                    )
+                } else existingPost
             }
         }
-        data.value = posts
     }
 
     override fun getById(postId: Long): Post {
         return posts.firstOrNull { it.id == postId }
             ?: throw NoSuchElementException("Пост с ID $postId не найден")
     }
+
+    override fun edit(post: Post): Post {
+        val index = posts.indexOfFirst { it.id == post.id }
+        if (index != -1) {
+            posts = posts.toMutableList().apply {
+                this[index] = post.copy(
+                    author = posts[index].author,
+                    published = posts[index].published,
+                    likes = posts[index].likes,
+                    likedByMe = posts[index].likedByMe,
+                    shareCount = posts[index].shareCount,
+                    video = posts[index].video
+                )
+            }
+            return posts[index]
+        } else {
+            throw NoSuchElementException("Пост с ID ${post.id} не найден")
+        }
+    }
+
+
 
     private fun readPosts(): List<Post> {
         val file = context.filesDir.resolve(FILE_NAME)

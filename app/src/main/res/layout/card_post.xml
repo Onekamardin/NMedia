@@ -67,7 +67,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/published" />
 
-    <!-- БЛОК ВИДЕО: показывается только при наличии ссылки -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/videoContainer"
         android:layout_width="match_parent"
