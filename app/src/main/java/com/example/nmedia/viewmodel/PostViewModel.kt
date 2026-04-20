@@ -1,17 +1,18 @@
 package com.example.nmedia.viewmodel
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.nmedia.dto.Post
 import com.example.nmedia.repository.PostRepository
-import com.example.nmedia.repository.PostRepositoryInMemoryImpl
+import com.example.nmedia.repository.PostRepositoryFileImpl
 
 private val empty = Post()
 
 
-class PostViewModel : ViewModel() {
+class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     private val _isEditing = MutableLiveData<Boolean>(false)
@@ -29,7 +30,7 @@ class PostViewModel : ViewModel() {
     }
 
 
-    private val repository: PostRepository = PostRepositoryInMemoryImpl()
+    private val repository: PostRepository = PostRepositoryFileImpl(application)
     val data = repository.getAll()
     fun likeById(id: Long) = repository.likeById(id)
     fun repostById(id: Long) = repository.repostById(id)
