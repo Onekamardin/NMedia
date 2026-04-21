@@ -30,9 +30,15 @@ class NewPostFragment : Fragment() {
         binding.edit.setText(arguments?.contentArg)
 
         binding.ok.setOnClickListener {
-            val content = binding.edit.text.toString().trim()
-            if (content.isNotEmpty()) {
-                viewModel.saveContent(Post(0L, content))
+            val newContent = binding.edit.text.toString().trim()
+            if (newContent.isNotEmpty()) {
+                val newPost = Post(
+                    id = 0L,
+                    author = "User",
+                    content = newContent,
+                    published = "Now"
+                )
+                viewModel.saveContent(newPost)
                 findNavController().popBackStack()
             } else {
                 Toast.makeText(

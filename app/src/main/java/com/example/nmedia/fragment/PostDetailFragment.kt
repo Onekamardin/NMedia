@@ -48,19 +48,19 @@ class PostDetailFragment : Fragment() {
     }
 
 
-    private fun setupPost(post: Post) {
-        binding.apply {
-            author.text = post.author
-            published.text = post.published
-            content.text = post.content
-            likes.text = formatCount(post.likes)
-            shares.text = formatCount(post.shareCount)
-            //views.text = formatCount(post.views)
-            ivLike.isChecked = post.likedByMe
 
-            videoContainer.visibility = if (!post.video.isNullOrBlank()) View.VISIBLE else View.GONE
-            if (!post.video.isNullOrBlank()) {
-                playButton.setOnClickListener { openVideo(post.video!!) }
+    private fun setupPost(updatedPost: Post) {
+        binding.apply {
+            author.text = updatedPost.author
+            published.text = updatedPost.published
+            content.text = updatedPost.content
+            likes.text = formatCount(updatedPost.likes)
+            shares.text = formatCount(updatedPost.shareCount)
+            ivLike.isChecked = updatedPost.likedByMe
+
+            videoContainer.visibility = if (!updatedPost.video.isNullOrBlank()) View.VISIBLE else View.GONE
+            if (!updatedPost.video.isNullOrBlank()) {
+                playButton.setOnClickListener { openVideo(updatedPost.video!!) }
             }
         }
     }
@@ -122,6 +122,9 @@ class PostDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
+
 
     companion object {
         private const val ARG_POST_ID = "post_id"

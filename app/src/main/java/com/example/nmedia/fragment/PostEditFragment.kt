@@ -36,7 +36,7 @@ class PostEditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(PostViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[PostViewModel::class.java]
 
         if (postId != 0L) {
             viewModel.data.observe(viewLifecycleOwner) { posts ->
@@ -54,13 +54,17 @@ class PostEditFragment : Fragment() {
                 val newContent = edit.text.toString().trim()
                 if (newContent.isNotEmpty()) {
                     if (postId != 0L) {
-                        // Редактируем существующий пост
                         val currentPost = viewModel.getById(postId)
                         val updatedPost = currentPost.copy(content = newContent)
                         viewModel.edit(updatedPost)
                     } else {
-                        // Создаём новый пост
-                        viewModel.saveContent(Post(0L, newContent))
+                        val newPost = Post(
+                            id = 0L,
+                            author = "User",
+                            content = newContent,
+                            published = "Now"
+                        )
+                        viewModel.saveContent(newPost)
                     }
                     findNavController().popBackStack()
                 } else {
@@ -72,12 +76,12 @@ class PostEditFragment : Fragment() {
                 }
             }
 
+
             cancel.setOnClickListener {
                 findNavController().popBackStack()
             }
         }
     }
-
 
 
     override fun onDestroyView() {

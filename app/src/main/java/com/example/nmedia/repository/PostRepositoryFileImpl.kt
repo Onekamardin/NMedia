@@ -69,6 +69,7 @@ class PostRepositoryFileImpl(private val context: Context) : PostRepository {
                 } else existingPost
             }
         }
+        data.value = posts
     }
 
     override fun getById(postId: Long): Post {
@@ -89,6 +90,7 @@ class PostRepositoryFileImpl(private val context: Context) : PostRepository {
                     video = posts[index].video
                 )
             }
+            data.value = posts
             return posts[index]
         } else {
             throw NoSuchElementException("Пост с ID ${post.id} не найден")

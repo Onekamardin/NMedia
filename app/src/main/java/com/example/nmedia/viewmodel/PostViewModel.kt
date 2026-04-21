@@ -41,11 +41,23 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun saveContent(post: Post) {
         try {
-            repository.save(post)
+            val fullPost = if (post.id == 0L) {
+                post.copy(
+                    id = 0L,
+                    author = "User", // замените на реальное имя
+                    published = "Now",
+                    likes = 0,
+                    likedByMe = false,
+                    shareCount = 0
+                )
+            } else post
+
+            repository.save(fullPost)
         } catch (e: Exception) {
             Toast.makeText(getApplication(), "Ошибка сохранения: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
     fun edit(post: Post) {
