@@ -8,4 +8,5 @@
     <string name="edit" translatable="false">Edit</string>
     <string name="error_empty" translatable="false">Content can\'t be empty</string>
     <string name="ok" translatable="false">OK</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 </resources>

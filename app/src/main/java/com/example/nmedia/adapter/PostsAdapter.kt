@@ -1,5 +1,6 @@
 package com.example.nmedia.adapter
 
+
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -23,13 +24,12 @@ interface PostListener {
     fun onShare(post: Post)
     fun onRemove(post: Post)
     fun onEdit(post: Post)
+    fun onPostClick(post: Post)
 }
 
 class PostsAdapter(
     private val listener: PostListener
-) :
-    ListAdapter<Post, PostsViewHolder>(PostDiffCallBack) {
-
+) : ListAdapter<Post, PostsViewHolder>(PostDiffCallBack) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -40,8 +40,8 @@ class PostsAdapter(
         val post = getItem(position)
         holder.bind(post)
     }
-
 }
+
 
 private fun formatCount(count: Int): String = when {
     count < 1000 -> "$count"
@@ -58,34 +58,48 @@ private fun formatCount(count: Int): String = when {
 class PostsViewHolder(
     private val binding: CardPostBinding,
     private val listener: PostListener
-
 ) : RecyclerView.ViewHolder(binding.root) {
+
+    private var isInteractionWithControls = false
+
     fun bind(post: Post) {
         with(binding) {
             author.text = post.author
             published.text = post.published
             content.text = post.content
+
+            // Обработка видео
             if (!post.video.isNullOrBlank()) {
                 videoContainer.visibility = View.VISIBLE
                 videoContainer.setOnClickListener {
+                    isInteractionWithControls = true
                     openVideo(post.video!!)
                 }
                 playButton.setOnClickListener {
+                    isInteractionWithControls = true
                     openVideo(post.video!!)
                 }
             } else {
                 videoContainer.visibility = View.GONE
             }
+
             ivShare.text = formatCount(post.shareCount)
             ivLike.isChecked = post.likedByMe
             ivLike.text = formatCount(post.likes)
-            binding.ivLike.setOnClickListener {
+
+            // Обработчики элементов управления — устанавливаем флаг
+            ivLike.setOnClickListener {
+                isInteractionWithControls = true
                 listener.onLike(post)
             }
-            binding.ivShare.setOnClickListener {
+
+            ivShare.setOnClickListener {
+                isInteractionWithControls = true
                 listener.onShare(post)
             }
+
             menu.setOnClickListener {
+                isInteractionWithControls = true
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
                     setOnMenuItemClickListener { item ->
@@ -106,7 +120,16 @@ class PostsViewHolder(
                 }.show()
             }
         }
+
+        itemView.setOnClickListener {
+            if (!isInteractionWithControls) {
+                listener.onPostClick(post)
+            }
+            // Сбрасываем флаг после обработки
+            isInteractionWithControls = false
+        }
     }
+
 
     private fun openVideo(videoUrl: String) {
         try {
@@ -118,20 +141,19 @@ class PostsViewHolder(
                 binding.root.context.startActivity(intent)
             } else {
                 Toast.makeText(
-                    (binding.root.context),
+                    binding.root.context,
                     "Не найдено приложение для открытия видео",
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
             }
         } catch (e: Exception) {
             Toast.makeText(
-                (binding.root.context), "Ошибка открытия видео: ${e.message}", Toast.LENGTH_SHORT
-            )
-                .show()
+                binding.root.context, "Ошибка открытия видео: ${e.message}", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }
+
 
 object PostDiffCallBack : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
@@ -141,5 +163,4 @@ object PostDiffCallBack : DiffUtil.ItemCallback<Post>() {
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
         return oldItem == newItem
     }
-
 }

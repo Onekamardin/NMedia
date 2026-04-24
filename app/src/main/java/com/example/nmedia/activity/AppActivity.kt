@@ -6,21 +6,27 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
 import com.example.nmedia.R
-import com.example.nmedia.databinding.ActivityIntentHandlerBinding
+import com.example.nmedia.databinding.ActivityAppBinding
+import com.example.nmedia.fragment.NewPostFragment.Companion.contentArg
 import com.google.android.material.snackbar.Snackbar
 
-class IntentHandlerActivity : AppCompatActivity() {
+class AppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val binding = ActivityIntentHandlerBinding.inflate(layoutInflater)
+        val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+        val navController = navHostFragment.navController
 
         intent?.let {
             if (it.action != Intent.ACTION_SEND) {
@@ -35,6 +41,11 @@ class IntentHandlerActivity : AppCompatActivity() {
                     }
                     .show()
             }
+            navController.navigate(
+                R.id.action_feedFragment_to_newPostFragment,
+                Bundle().apply {
+                    contentArg = text
+                })
         }
     }
 }

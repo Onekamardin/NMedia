@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.NewPostActivity">
+    tools:context=".fragment.NewPostFragment">
 
     <EditText
         android:id="@+id/edit"
@@ -28,5 +28,15 @@
         android:layout_height="wrap_content"
         app:layout_anchor="@id/bottomAppBar"
         app:srcCompat="@drawable/ic_ok" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Отмена"
+        android:textColor="@color/white"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

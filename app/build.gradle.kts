@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -52,4 +53,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.dynamic.features.fragment)
+    androidTestImplementation(libs.androidx.navigation.testing)
+    implementation(libs.kotlinx.serialization.json)
+
 }
