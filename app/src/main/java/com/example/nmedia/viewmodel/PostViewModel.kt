@@ -1,14 +1,13 @@
 package com.example.nmedia.viewmodel
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.dto.Post
 import com.example.nmedia.repository.PostRepository
-import com.example.nmedia.repository.PostRepositoryFileImpl
+import com.example.nmedia.repository.PostRepositorySQLiteImpl
 
 private val empty = Post()
 
@@ -30,7 +29,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    private val repository: PostRepository = PostRepositoryFileImpl(application)
+    private val repository: PostRepository = PostRepositorySQLiteImpl(application)
     val data = repository.getAll()
     fun likeById(id: Long) = repository.likeById(id)
     fun repostById(id: Long) = repository.repostById(id)
@@ -44,7 +43,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             val fullPost = if (post.id == 0L) {
                 post.copy(
                     id = 0L,
-                    author = "User", // замените на реальное имя
+                    author = "User",
                     published = "Now",
                     likes = 0,
                     likedByMe = false,
