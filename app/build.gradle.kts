@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("plugin.serialization") version "2.0.21"
-    id("com.google.devtools.ksp")
+    //alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.ksp)
 }
+
 
 android {
     namespace = "com.example.nmedia"
@@ -29,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -42,31 +43,30 @@ android {
 }
 
 dependencies {
-
-
-
-    implementation(libs.androidx.room)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.room.runtime.android)
-    testImplementation(libs.junit)
     implementation(libs.gson)
+    implementation(libs.kotlinx.serialization.json)
+
+    // Room
     implementation(libs.androidx.room)
     implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
-
-
-    ksp("androidx.room:room-compiler:2.6.1")
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.androidx.fragment.ktx)
+    // Navigation
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.navigation.dynamic.features.fragment)
-    androidTestImplementation(libs.androidx.navigation.testing)
-    implementation(libs.kotlinx.serialization.json)
 
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.navigation.testing)
+
+    // Fragments
+    implementation(libs.androidx.fragment.ktx)
 }
