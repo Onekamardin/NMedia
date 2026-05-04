@@ -68,7 +68,6 @@ class PostsViewHolder(
             published.text = post.published
             content.text = post.content
 
-            // Обработка видео
             if (!post.video.isNullOrBlank()) {
                 videoContainer.visibility = View.VISIBLE
                 videoContainer.setOnClickListener {
@@ -87,7 +86,6 @@ class PostsViewHolder(
             ivLike.isChecked = post.likedByMe
             ivLike.text = formatCount(post.likes)
 
-            // Обработчики элементов управления — устанавливаем флаг
             ivLike.setOnClickListener {
                 isInteractionWithControls = true
                 listener.onLike(post)
@@ -161,6 +159,11 @@ object PostDiffCallBack : DiffUtil.ItemCallback<Post>() {
     }
 
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem == newItem
+        return oldItem == newItem &&
+                oldItem.likes == newItem.likes &&
+                oldItem.likedByMe == newItem.likedByMe &&
+                oldItem.shareCount == newItem.shareCount &&
+                oldItem.content == newItem.content
     }
+
 }

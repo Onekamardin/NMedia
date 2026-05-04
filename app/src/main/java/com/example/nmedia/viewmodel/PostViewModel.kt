@@ -24,6 +24,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun edit(post: Post): Post = repository.edit(post)
 
 
+
 //    fun saveContent(post: Post) {
 //        try {
 //            val fullPost = if (post.id == 0L) {

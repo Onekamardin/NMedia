@@ -30,5 +30,8 @@ interface PostDao {
 
     @Query("UPDATE posts SET shareCount = :shareCount WHERE id = :postId")
     fun updateShares(postId: Long, shareCount: Int)
+
+    @Query("SELECT MAX(id) FROM posts")
+    fun getMaxId(): Long?
 }
 
