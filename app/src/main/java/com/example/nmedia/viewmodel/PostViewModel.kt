@@ -7,68 +7,54 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.dto.Post
 import com.example.nmedia.repository.PostRepository
-import com.example.nmedia.repository.PostRepositorySQLiteImpl
+import com.example.nmedia.repository.PostRepositoryRoomImpl
 
 private val empty = Post()
 
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val _data = MutableLiveData<List<Post>>()
-    private val _isEditing = MutableLiveData<Boolean>(false)
-    val isEditing: LiveData<Boolean> = _isEditing
-
-    private val _editedPost = MutableLiveData<Post?>(null)
-    val editedPost: LiveData<Post?> = _editedPost
-    fun startEditing() {
-        _isEditing.value = true
-    }
-
-    private fun cancelEditing() {
-        _isEditing.value = false
-        _editedPost.value = null
-    }
-
-
-    private val repository: PostRepository = PostRepositorySQLiteImpl(application)
+    private val repository: PostRepository = PostRepositoryRoomImpl(application)
     val data = repository.getAll()
+
     fun likeById(id: Long) = repository.likeById(id)
     fun repostById(id: Long) = repository.repostById(id)
     fun removeById(id: Long) = repository.removeById(id)
-    fun getById(id: Long) = repository.getById(id)
-
-    val edited = MutableLiveData(empty)
-
-    fun saveContent(post: Post) {
-        try {
-            val fullPost = if (post.id == 0L) {
-                post.copy(
-                    id = 0L,
-                    author = "User",
-                    published = "Now",
-                    likes = 0,
-                    likedByMe = false,
-                    shareCount = 0
-                )
-            } else post
-
-            repository.save(fullPost)
-        } catch (e: Exception) {
-            Toast.makeText(getApplication(), "Ошибка сохранения: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
+    fun saveContent(post: Post) = repository.save(post)
+    fun getById(postId: Long): Post = repository.getById(postId)
+    fun edit(post: Post): Post = repository.edit(post)
 
 
-
-    fun edit(post: Post) {
-        try {
-            val updatedPost = repository.edit(post)
-            _data.value = _data.value?.map { existingPost ->
-                if (existingPost.id == updatedPost.id) updatedPost else existingPost
-            } ?: listOf(updatedPost)
-        } catch (e: Exception) {
-            Toast.makeText(getApplication(), "Ошибка редактирования: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
+//    fun saveContent(post: Post) {
+//        try {
+//            val fullPost = if (post.id == 0L) {
+//                post.copy(
+//                    id = 0L,
+//                    author = "User",
+//                    published = "Now",
+//                    likes = 0,
+//                    likedByMe = false,
+//                    shareCount = 0
+//                )
+//            } else post
+//
+//            repository.save(fullPost)
+//        } catch (e: Exception) {
+//            Toast.makeText(getApplication(), "Ошибка сохранения: ${e.message}", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+//
+//
+//
+//    fun edit(post: Post) {
+//        try {
+//            val updatedPost = repository.edit(post)
+//            _data.value = _data.value?.map { existingPost ->
+//                if (existingPost.id == updatedPost.id) updatedPost else existingPost
+//            } ?: listOf(updatedPost)
+//        } catch (e: Exception) {
+//            Toast.makeText(getApplication(), "Ошибка редактирования: ${e.message}", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
 
 }
