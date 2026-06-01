@@ -1,18 +1,19 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.kotlin.ksp)
-    alias(libs.plugins.kotlin.serialization)
+    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("kapt")
+   // id("com.google.devtools.ksp")
 }
 
 android {
     namespace = "com.example.nmedia"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ru.netology.nmedia"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -43,8 +44,9 @@ android {
 
 dependencies {
 
+
+
     implementation(libs.androidx.room)
-    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -53,6 +55,16 @@ dependencies {
     implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     implementation(libs.gson)
+//    implementation(libs.room.runtime)
+//    implementation(libs.room.ktx)
+
+    implementation(libs.androidx.room)
+    implementation(libs.room.ktx)
+
+    // ❗ обязательно для Room
+    kapt(libs.room.compiler)
+
+    //ksp("androidx.room:room-compiler:2.6.1")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.fragment.ktx)
