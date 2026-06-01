@@ -40,8 +40,8 @@ class PostDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(PostViewModel::class.java)
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.find { it.id == postId }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            val post = state.posts.find { it.id == postId }
             post?.let { setupPost(it) }
         }
         setupClickListeners()
@@ -52,7 +52,7 @@ class PostDetailFragment : Fragment() {
     private fun setupPost(updatedPost: Post) {
         binding.apply {
             author.text = updatedPost.author
-            published.text = updatedPost.published
+            published.text = updatedPost.published.toString()
             content.text = updatedPost.content
             likes.text = formatCount(updatedPost.likes)
             shares.text = formatCount(updatedPost.shareCount)

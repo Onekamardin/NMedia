@@ -36,10 +36,9 @@ class NewPostFragment : Fragment() {
                     id = 0L,
                     author = "User",
                     content = newContent,
-                    published = "Now"
+                    published = 0
                 )
                 viewModel.saveContent(newPost)
-                findNavController().popBackStack()
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -47,6 +46,10 @@ class NewPostFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
         }
 
         binding.cancel.setOnClickListener {
