@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.dto.AppDatabase
 import com.example.nmedia.dto.Post
-import com.example.nmedia.entity.PostEntity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType.Companion.toMediaType
@@ -58,27 +57,24 @@ class PostRepositoryNetworkImpl(private val context: Context) : PostRepository {
                 .build()
         }
 
-        var response: okhttp3.Response? = null
-
         try {
-            response = client.newCall(request).execute()
-            if (response.isSuccessful) {
-                val updatedPost = gson.fromJson(
-                    response.body?.string() ?: "{}",
-                    Post::class.java
-                )
-                _posts.postValue(getAll().map { post ->
-                    if (post.id == updatedPost.id) updatedPost else post
-                })
-            } else {
-                throw RuntimeException("Failed to like/unlike post: ${response.code}")
+            val response = client.newCall(request).execute()
+
+            response.use { resp ->
+                if (resp.isSuccessful) {
+                    val updatedPost = getById(id)
+                    _posts.postValue(_posts.value?.map { post ->
+                        if (post.id == updatedPost.id) updatedPost else post
+                    } ?: listOf(updatedPost))
+                } else {
+                    throw RuntimeException("Failed to like/unlike post: ${resp.code}")
+                }
             }
         } catch (e: Exception) {
             throw RuntimeException("Error during like/unlike: ${e.message}")
-        } finally {
-            response?.close()
         }
     }
+
 
 
 
@@ -105,14 +101,23 @@ class PostRepositoryNetworkImpl(private val context: Context) : PostRepository {
     }
 
 
-    override fun repostById(id: Long) {
-        TODO("Not yet implemented")
-    }
+
 
 
     override fun getById(postId: Long): Post {
-        TODO("Not yet implemented")
+        val request: Request = Request.Builder()
+            .url("${BASE_URL}/api/slow/posts/$postId")
+            .build()
+
+        return client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw RuntimeException("Failed to get post: ${response.code}")
+            }
+            val body = response.body?.string() ?: throw RuntimeException("Body is null")
+            gson.fromJson(body, Post::class.java)
+        }
     }
+
 
     override fun edit(post: Post): Post {
         TODO("Not yet implemented")

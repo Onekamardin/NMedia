@@ -29,7 +29,7 @@ class FeedFragment : Fragment() {
         val adapter = PostsAdapter(object : PostListener {
             override fun onLike(post: Post) = viewModel.likeById(post.id)
             override fun onShare(post: Post) {
-                viewModel.repostById(post.id)
+                //viewModel.repostById(post.id)
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     type = "text/plain"

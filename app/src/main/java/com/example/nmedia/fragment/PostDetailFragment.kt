@@ -68,7 +68,7 @@ class PostDetailFragment : Fragment() {
     private fun setupClickListeners() {
         binding.apply {
             ivLike.setOnClickListener { viewModel.likeById(postId) }
-            ivShare.setOnClickListener { viewModel.repostById(postId) }
+            //ivShare.setOnClickListener { viewModel.repostById(postId) }
 
             btnEdit.setOnClickListener {
                 findNavController().navigate(

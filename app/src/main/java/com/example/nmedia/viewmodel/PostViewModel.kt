@@ -43,7 +43,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun repostById(id: Long) = repository.repostById(id)
+
     fun removeById(id: Long) = repository.removeById(id)
    // fun saveContent(post: Post) = repository.save(post)
     fun getById(postId: Long): Post = repository.getById(postId)
