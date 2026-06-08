@@ -65,7 +65,7 @@ class PostsViewHolder(
     fun bind(post: Post) {
         with(binding) {
             author.text = post.author
-            published.text = post.published
+            published.text = post.published.toString()
             content.text = post.content
 
             if (!post.video.isNullOrBlank()) {

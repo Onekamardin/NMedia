@@ -39,8 +39,8 @@ class PostEditFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[PostViewModel::class.java]
 
         if (postId != 0L) {
-            viewModel.data.observe(viewLifecycleOwner) { posts ->
-                val post = posts.find { it.id == postId }
+            viewModel.data.observe(viewLifecycleOwner) { state ->
+                val post = state.posts.find { it.id == postId }
                 post?.let { binding.edit.setText(it.content) }
             }
         }
@@ -62,7 +62,7 @@ class PostEditFragment : Fragment() {
                             id = 0L,
                             author = "User",
                             content = newContent,
-                            published = "Now"
+                            published = 0
                         )
                         viewModel.saveContent(newPost)
                     }
