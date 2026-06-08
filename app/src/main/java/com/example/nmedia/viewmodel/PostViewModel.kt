@@ -19,6 +19,7 @@ private val empty = Post(
     likedByMe = false,
     likes = 0,
     published = 0,
+    authorAvatar = ""
 )
 
 
