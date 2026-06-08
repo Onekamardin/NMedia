@@ -45,7 +45,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun removeById(id: Long) = repository.removeById(id)
-   // fun saveContent(post: Post) = repository.save(post)
     fun getById(postId: Long): Post = repository.getById(postId)
     fun edit(post: Post): Post = repository.edit(post)
 
@@ -68,52 +67,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun loadPosts() {
         thread {
-            // Начинаем загрузку
             _data.postValue(FeedModel(loading = true))
             try {
-                // Данные успешно получены
                 val posts = repository.getAll()
                 FeedModel(posts = posts, empty = posts.isEmpty())
             } catch (e: IOException) {
-                // Получена ошибка
                 FeedModel(error = true)
             }.also(_data::postValue)
         }
     }
-
-
-
-//    fun saveContent(post: Post) {
-//        try {
-//            val fullPost = if (post.id == 0L) {
-//                post.copy(
-//                    id = 0L,
-//                    author = "User",
-//                    published = "Now",
-//                    likes = 0,
-//                    likedByMe = false,
-//                    shareCount = 0
-//                )
-//            } else post
-//
-//            repository.save(fullPost)
-//        } catch (e: Exception) {
-//            Toast.makeText(getApplication(), "Ошибка сохранения: ${e.message}", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-//
-//
-//
-//    fun edit(post: Post) {
-//        try {
-//            val updatedPost = repository.edit(post)
-//            _data.value = _data.value?.map { existingPost ->
-//                if (existingPost.id == updatedPost.id) updatedPost else existingPost
-//            } ?: listOf(updatedPost)
-//        } catch (e: Exception) {
-//            Toast.makeText(getApplication(), "Ошибка редактирования: ${e.message}", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
 
 }
