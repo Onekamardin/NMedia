@@ -12,4 +12,5 @@
     <string name="error_network" translatable="false">error network</string>
     <string name="retry" translatable="false">Retry</string>
     <string name="no_posts" translatable="false">No posts</string>
+
 </resources>

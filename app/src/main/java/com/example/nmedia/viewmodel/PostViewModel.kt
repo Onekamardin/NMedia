@@ -1,16 +1,15 @@
 package com.example.nmedia.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.nmedia.dto.Post
 import com.example.nmedia.repository.PostRepository
-import com.example.nmedia.repository.PostRepositoryNetworkImpl
 import ru.netology.nmedia.model.FeedModel
-import ru.netology.nmedia.util.SingleLiveEvent
-import java.io.IOException
 import kotlin.concurrent.thread
+
 
 private val empty = Post(
     id = 0,
@@ -23,59 +22,89 @@ private val empty = Post(
 )
 
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositoryNetworkImpl(application)
-    private val _data = MutableLiveData(FeedModel())
-    val data: LiveData<FeedModel>
-        get() = _data
-    val edited = MutableLiveData(empty)
-    private val _postCreated = SingleLiveEvent<Unit>()
-    val postCreated: LiveData<Unit>
-        get() = _postCreated
+class PostViewModel(private val repository: PostRepository) : ViewModel() {
+    private var errorCallback: ((String) -> Unit)? = null
+
+    fun setErrorCallback(callback: (String) -> Unit) {
+        errorCallback = callback
+    }
+    private val _data = MutableLiveData<FeedModel>()
+    val data: LiveData<FeedModel> = _data
+
+    private var currentPosts: List<Post> = emptyList()
+
+    fun loadPosts() {
+        _data.value = _data.value?.copy(loading = true, error = false)
+        thread {
+            try {
+                currentPosts = repository.getAll()
+                _data.postValue(FeedModel(
+                    posts = currentPosts,
+                    loading = false,
+                    empty = currentPosts.isEmpty()
+                ))
+            } catch (e: Exception) {
+                _data.postValue(_data.value?.copy(
+                    loading = false,
+                    error = true
+                )!!)
+            }
+        }
+    }
+
+    fun retryLoadPosts() {
+        loadPosts()
+    }
 
     fun likeById(id: Long) {
         thread {
             try {
                 repository.likeById(id)
                 loadPosts()
-            } catch (e: IOException) {
-                _data.postValue(FeedModel(error = true))
+            } catch (e: Exception) {
+                errorCallback?.invoke("Ошибка при лайке: ${e.message}")
             }
         }
     }
 
-
-    fun removeById(id: Long) = repository.removeById(id)
-    fun getById(postId: Long): Post = repository.getById(postId)
-    fun edit(post: Post): Post = repository.edit(post)
-
-
-    init {
-        loadPosts()
+    fun removeById(id: Long) {
+        thread {
+            try {
+                repository.removeById(id)
+                loadPosts()
+            } catch (e: Exception) {
+                errorCallback?.invoke("Ошибка при удалении: ${e.message}")
+            }
+        }
     }
 
     fun saveContent(post: Post) {
         thread {
-            edited.value?.let {
-                thread {
-                    repository.save(it)
-                    _postCreated.postValue(Unit)
-                }
-            }
-            edited.postValue(empty)
-        }
-
-    }
-    fun loadPosts() {
-        thread {
-            _data.postValue(FeedModel(loading = true))
             try {
-                val posts = repository.getAll()
-                FeedModel(posts = posts, empty = posts.isEmpty())
-            } catch (e: IOException) {
-                FeedModel(error = true)
-            }.also(_data::postValue)
+                repository.save(post)
+                loadPosts()
+            } catch (e: Exception) {
+                errorCallback?.invoke("Ошибка при сохранении: ${e.message}")
+            }
         }
     }
+
+    fun editPost(post: Post) {
+        thread {
+            try {
+                repository.edit(post)
+                loadPosts()
+            } catch (e: Exception) {
+                errorCallback?.invoke("Ошибка при редактировании: ${e.message}")
+            }
+        }
+    }
+
+
+
+
+
 
 }
+
+
