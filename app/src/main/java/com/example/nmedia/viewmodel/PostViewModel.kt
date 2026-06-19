@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.nmedia.dto.Post
+import com.example.nmedia.exception.NetworkException
 import com.example.nmedia.repository.PostRepository
 import ru.netology.nmedia.model.FeedModel
 import kotlin.concurrent.thread
@@ -23,6 +24,12 @@ private val empty = Post(
 
 
 class PostViewModel(private val repository: PostRepository) : ViewModel() {
+    private val _postCreated = MutableLiveData<Unit>()
+    val postCreated: LiveData<Unit> = _postCreated
+
+    private val _errorEvent = MutableLiveData<String>()
+    val errorEvent: LiveData<String> = _errorEvent
+
     private var errorCallback: ((String) -> Unit)? = null
 
     fun setErrorCallback(callback: (String) -> Unit) {
@@ -82,14 +89,15 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
         thread {
             try {
                 repository.save(post)
-                loadPosts()
+                _postCreated.postValue(Unit)
             } catch (e: Exception) {
-                errorCallback?.invoke("Ошибка при сохранении: ${e.message}")
+                _errorEvent.postValue("Ошибка при сохранении: ${e.message}")
             }
         }
     }
 
-    fun editPost(post: Post) {
+
+    fun edit(post: Post) {
         thread {
             try {
                 repository.edit(post)
@@ -97,6 +105,14 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
             } catch (e: Exception) {
                 errorCallback?.invoke("Ошибка при редактировании: ${e.message}")
             }
+        }
+    }
+
+    fun getById(postId: Long): Post {
+        return try {
+            repository.getById(postId)
+        } catch (e: Exception) {
+            throw NetworkException("Failed to get post by ID: ${e.message}")
         }
     }
 
