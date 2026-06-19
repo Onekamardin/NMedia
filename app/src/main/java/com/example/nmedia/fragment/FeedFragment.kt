@@ -25,7 +25,7 @@ class FeedFragment : Fragment() {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
         val viewModel: PostViewModel by activityViewModels()
-
+        val BASE_URL = "http://10.0.2.2:9999"
         val adapter = PostsAdapter(object : PostListener {
             override fun onLike(post: Post) = viewModel.likeById(post.id)
             override fun onShare(post: Post) {
@@ -53,7 +53,7 @@ class FeedFragment : Fragment() {
                     Bundle().apply { putLong("post_id", post.id) }
                 )
             }
-        })
+        }, BASE_URL)
 
         binding.recyclerView.adapter = adapter
 

@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.nmedia.R
 import com.example.nmedia.databinding.CardPostBinding
 import com.example.nmedia.dto.Post
@@ -28,17 +29,19 @@ interface PostListener {
 }
 
 class PostsAdapter(
-    private val listener: PostListener
+    private val listener: PostListener,
+    private val baseUrl: String
 ) : ListAdapter<Post, PostsViewHolder>(PostDiffCallBack) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostsViewHolder(binding, listener)
+        return PostsViewHolder(binding, listener, baseUrl)
     }
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
+
     }
 }
 
@@ -57,7 +60,8 @@ private fun formatCount(count: Int): String = when {
 
 class PostsViewHolder(
     private val binding: CardPostBinding,
-    private val listener: PostListener
+    private val listener: PostListener,
+    private val baseUrl: String
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private var isInteractionWithControls = false
@@ -67,6 +71,25 @@ class PostsViewHolder(
             author.text = post.author
             published.text = post.published.toString()
             content.text = post.content
+
+            if (!post.authorAvatar.isNullOrBlank()) {
+                val avatarUrl = "$baseUrl/avatars/${post.authorAvatar}"
+
+                Glide.with(itemView.context)
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.ic_avatar_placeholder)
+                    .error(R.drawable.ic_avatar_error)
+                    .circleCrop()
+                    .timeout(10000)
+                    .into(avatarImageView)
+            } else {
+                // Если аватара нет — показываем заглушку
+                Glide.with(itemView.context)
+                    .load(R.drawable.ic_avatar_placeholder)
+                    .circleCrop()
+                    .into(avatarImageView)
+            }
+
 
             if (!post.video.isNullOrBlank()) {
                 videoContainer.visibility = View.VISIBLE

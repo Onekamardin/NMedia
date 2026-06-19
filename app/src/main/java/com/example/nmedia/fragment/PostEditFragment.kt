@@ -62,7 +62,8 @@ class PostEditFragment : Fragment() {
                             id = 0L,
                             author = "User",
                             content = newContent,
-                            published = 0
+                            published = 0,
+                            authorAvatar = ""
                         )
                         viewModel.saveContent(newPost)
                     }

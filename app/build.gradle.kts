@@ -63,10 +63,7 @@ dependencies {
 
     implementation(libs.androidx.room)
     implementation(libs.room.ktx)
-
-    // ❗ обязательно для Room
     kapt(libs.room.compiler)
-
     //ksp("androidx.room:room-compiler:2.6.1")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +74,6 @@ dependencies {
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
-
+    implementation(libs.glide)
 
 }
