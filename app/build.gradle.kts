@@ -75,5 +75,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
     implementation(libs.glide)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.glide.core)
+    annotationProcessor(libs.glide.compiler)
+
 
 }
