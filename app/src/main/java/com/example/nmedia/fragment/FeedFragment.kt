@@ -16,12 +16,11 @@ import com.example.nmedia.databinding.FragmentFeedBinding
 import com.example.nmedia.dto.Post
 import com.example.nmedia.viewmodel.PostViewModel
 import com.google.android.material.snackbar.Snackbar
-import android.os.Handler
-import android.os.Looper
 
 class FeedFragment : Fragment() {
     private var _binding: FragmentFeedBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,24 +30,27 @@ class FeedFragment : Fragment() {
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewModel: PostViewModel by activityViewModels()
         val BASE_URL = "http://10.0.2.2:9999"
 
         val adapter = PostsAdapter(object : PostListener {
-            override fun onLike(post: Post) = viewModel.likeById(post.id)
+            override fun onLike(post: Post) {
+                viewModel.likeById(post.id)
+            }
             override fun onShare(post: Post) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, post.content)
                 }
-                val chooser = Intent.createChooser(intent, getString(R.string.nmedia))
-                startActivity(chooser)
+                startActivity(Intent.createChooser(intent, getString(R.string.nmedia)))
             }
-            override fun onRemove(post: Post) = viewModel.removeById(post.id)
+            override fun onRemove(post: Post) {
+                viewModel.removeById(post.id)
+            }
             override fun onEdit(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postEditFragment,
@@ -64,46 +66,43 @@ class FeedFragment : Fragment() {
         }, BASE_URL)
 
         binding.recyclerView.adapter = adapter
+
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
+
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.progress.isVisible = state.loading
             binding.emptyText.isVisible = state.empty && !state.loading
             binding.errorGroup.visibility = if (state.error) View.VISIBLE else View.GONE
         }
+
+        viewModel.errorText.observe(viewLifecycleOwner) { message ->
+            if (!message.isNullOrBlank()) {
+                showErrorSnackbar(message)
+            }
+        }
+
         binding.retryButton.setOnClickListener {
             viewModel.retryLoadPosts()
         }
+    }
 
-        fun showErrorSnackbar(message: String) {
-            Handler(Looper.getMainLooper()).post {
-                Snackbar.make(
-                    binding.root,
-                    message,
-                    Snackbar.LENGTH_LONG
-                )
-                    .setAction("Повторить") { _ ->
-                        viewModel.retryLoadPosts()
-                    }
-                    .show()
+    private fun showErrorSnackbar(message: String) {
+        Snackbar.make(
+            binding.root,
+            message,
+            Snackbar.LENGTH_LONG
+        )
+            .setAction("Повторить") { _ ->
+                viewModel.retryLoadPosts()
             }
-        }
-        viewModel.setErrorCallback { message ->
-            showErrorSnackbar(message)
-        }
-
+            .show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-
-
 }
-
-
-

@@ -1,30 +1,33 @@
 package com.example.nmedia.api
 
-import com.example.nmedia.dto.Post
-import retrofit2.Call
-import retrofit2.Response
+import com.example.nmedia.dto.*
 import retrofit2.http.*
 
 interface PostApiService {
-    @GET("api/slow/posts")
-    fun getAll(): Call<List<Post>>
+    @GET("api/posts")
+    suspend fun getAll(): List<Post>
+
+    @GET("api/authors/{id}")
+    suspend fun getAuthor(@Path("id") id: Long): Author
+
+    @GET("api/comments")
+    suspend fun getComments(@Query("postId") postId: Long): List<Comment>
 
     @POST("api/posts/{id}/likes")
-    fun likePost(@Path("id") id: Long): Call<Void>
+    suspend fun likePost(@Path("id") id: Long)
 
     @DELETE("api/posts/{id}/likes")
-    fun unlikePost(@Path("id") id: Long): Call<Void>
+    suspend fun unlikePost(@Path("id") id: Long)
 
-    @POST("api/slow/posts")
-    fun savePost(@Body post: Post): Call<Post>
+    @POST("api/posts")
+    suspend fun savePost(@Body post: Post): Post
 
-    @DELETE("api/slow/posts/{id}")
-    fun removePost(@Path("id") id: Long): Call<Void>
+    @DELETE("api/posts/{id}")
+    suspend fun removePost(@Path("id") id: Long)
 
-    @PUT("api/slow/posts/{id}")
-    fun editPost(@Path("id") id: Long, @Body post: Post): Call<Post>
+    @PUT("api/posts/{id}")
+    suspend fun editPost(@Path("id") id: Long, @Body post: Post): Post
 
-    @GET("api/slow/posts/{id}")
-    fun getPostById(@Path("id") postId: Long): Call<Post>
+    @GET("api/posts/{id}")
+    suspend fun getPostById(@Path("id") postId: Long): Post
 }
-

@@ -1,89 +1,77 @@
 package com.example.nmedia.repository
 
 import android.content.Context
-import androidx.lifecycle.MutableLiveData
 import com.example.nmedia.api.RetrofitClient
-import com.example.nmedia.dto.AppDatabase
-import com.example.nmedia.dto.Post
-import com.example.nmedia.exception.HttpException
+import com.example.nmedia.dto.*
 import com.example.nmedia.exception.NetworkException
+import com.example.nmedia.model.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class PostRepositoryRetrofitImpl(private val context: Context) : PostRepository {
-    private val postDao = AppDatabase.getDatabase(context).postDao()
-    private val _posts = MutableLiveData<List<Post>>()
 
+    private val postDao = AppDatabase.getDatabase(context).postDao()
     private val apiService = RetrofitClient.postApiService
 
-    override fun getAll(): List<Post> {
-        return try {
-            val response = apiService.getAll().execute()
-            if (response.isSuccessful) {
-                response.body() ?: emptyList()
-            } else {
-                throw HttpException(response)
+    override suspend fun getAll(): List<PostWithAuthor> = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val posts = apiService.getAll()
+
+            val authorsMap = mutableMapOf<Long, Author>()
+            for (post in posts) {
+                val author = apiService.getAuthor(post.authorId)
+                authorsMap[post.authorId] = author
             }
+
+            val result = mutableListOf<PostWithAuthor>()
+            for (post in posts) {
+                val author = authorsMap[post.authorId]
+                    ?: throw Exception("Author not found for post ${post.id}")
+
+                val comments = apiService.getComments(post.id)
+
+                val commentAuthorsMap = mutableMapOf<Long, Author>()
+                for (c in comments) {
+                    val ca = apiService.getAuthor(c.authorId)
+                    commentAuthorsMap[c.authorId] = ca
+                }
+
+                val commentsWithAuthors = comments.mapNotNull { comment ->
+                    commentAuthorsMap[comment.authorId]?.let { a ->
+                        CommentWithAuthor(comment, a)
+                    }
+                }
+
+                result.add(PostWithAuthor(post, author, commentsWithAuthors))
+            }
+            result
         } catch (e: Exception) {
             throw NetworkException("Failed to load posts: ${e.message}")
         }
     }
 
-    override fun likeById(id: Long) {
+
+    override suspend fun likeById(id: Long) {
         try {
-            val likeResponse = apiService.likePost(id).execute()
-            if (!likeResponse.isSuccessful) throw HttpException(likeResponse)
+            apiService.likePost(id)
         } catch (e: Exception) {
-            throw NetworkException("Error during like: ${e.message}")
+            throw NetworkException("Like failed: ${e.message}")
         }
     }
 
-
-    override fun save(post: Post): Post {
-        return try {
-            val response = apiService.savePost(post).execute()
-            if (response.isSuccessful) {
-                response.body() ?: throw NetworkException("Empty response")
-            } else {
-                throw HttpException(response)
-            }
-        } catch (e: Exception) {
-            throw NetworkException("Failed to save post: ${e.message}")
-        }
+    override suspend fun save(post: Post): Post {
+        return apiService.savePost(post)
     }
 
-    override fun removeById(id: Long) {
-        try {
-            val response = apiService.removePost(id).execute()
-            if (!response.isSuccessful) throw HttpException(response)
-        } catch (e: Exception) {
-            throw NetworkException("Failed to remove post: ${e.message}")
-        }
+    override suspend fun removeById(id: Long) {
+        apiService.removePost(id)
     }
 
-    override fun getById(postId: Long): Post {
-        return try {
-            val response = apiService.getPostById(postId).execute()
-            if (response.isSuccessful) {
-                response.body() ?: throw NetworkException("Post not found")
-            } else {
-                throw HttpException(response)
-            }
-        } catch (e: Exception) {
-            throw NetworkException("Failed to get post: ${e.message}")
-        }
+    override suspend fun getById(postId: Long): Post {
+        return apiService.getPostById(postId)
     }
 
-    override fun edit(post: Post): Post {
-        return try {
-            val response = apiService.editPost(post.id, post).execute()
-            if (response.isSuccessful) {
-                response.body() ?: throw NetworkException("Failed to edit post")
-            } else {
-                throw HttpException(response)
-            }
-        } catch (e: Exception) {
-            throw NetworkException("Failed to edit post: ${e.message}")
-        }
+    override suspend fun edit(post: Post): Post {
+        return apiService.editPost(post.id, post)
     }
-
-
 }

@@ -16,13 +16,11 @@ class PostEditFragment : Fragment() {
     private var _binding: FragmentPostEditBinding? = null
     private val binding get() = _binding!!
     private var postId: Long = 0L
-
     private lateinit var viewModel: PostViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postId = arguments?.getLong(ARG_POST_ID) ?: 0L
-
     }
 
     override fun onCreateView(
@@ -39,9 +37,17 @@ class PostEditFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[PostViewModel::class.java]
 
         if (postId != 0L) {
-            viewModel.data.observe(viewLifecycleOwner) { state ->
-                val post = state.posts.find { it.id == postId }
-                post?.let { binding.edit.setText(it.content) }
+            val post = viewModel.getPostById(postId)
+            if (post != null) {
+                binding.edit.setText(post.content)
+            } else {
+                viewModel.data.observe(viewLifecycleOwner) { state ->
+                    val foundPost = state.posts.find { it.post.id == postId }
+                    foundPost?.let {
+                        binding.edit.setText(it.post.content)
+                        viewModel.data.removeObservers(viewLifecycleOwner)
+                    }
+                }
             }
         }
 
@@ -54,16 +60,27 @@ class PostEditFragment : Fragment() {
                 val newContent = edit.text.toString().trim()
                 if (newContent.isNotEmpty()) {
                     if (postId != 0L) {
-                        val currentPost = viewModel.getById(postId)
-                        val updatedPost = currentPost.copy(content = newContent)
-                        viewModel.edit(updatedPost)
+                        val currentPost = viewModel.getPostById(postId)
+                        if (currentPost != null) {
+                            val updatedPost = currentPost.copy(content = newContent)
+                            viewModel.edit(updatedPost)
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Не удалось загрузить пост для редактирования",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@setOnClickListener
+                        }
                     } else {
                         val newPost = Post(
                             id = 0L,
-                            author = "User",
+                            authorId = 1L,
                             content = newContent,
-                            published = 0,
-                            authorAvatar = ""
+                            published = System.currentTimeMillis(),
+                            likedByMe = false,
+                            likes = 0,
+                            attachment = null
                         )
                         viewModel.saveContent(newPost)
                     }
@@ -77,13 +94,11 @@ class PostEditFragment : Fragment() {
                 }
             }
 
-
             cancel.setOnClickListener {
                 findNavController().popBackStack()
             }
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -97,4 +112,3 @@ class PostEditFragment : Fragment() {
         }
     }
 }
-

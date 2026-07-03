@@ -1,14 +1,14 @@
 package com.example.nmedia.repository
 
-import androidx.lifecycle.LiveData
 import com.example.nmedia.dto.Post
+import com.example.nmedia.model.PostWithAuthor
 
 interface PostRepository {
-
-    fun getAll(): List<Post>
-    fun likeById(id: Long)
-    fun removeById(id: Long)
-    fun save(post: Post): Post
-    fun getById(postId: Long): Post
-    fun edit(post: Post): Post
+    suspend fun getAll(): List<PostWithAuthor>
+    suspend fun likeById(id: Long)
+    suspend fun save(post: Post): Post
+    suspend fun removeById(id: Long)
+    suspend fun getById(postId: Long): Post
+    suspend fun edit(post: Post): Post
 }
+
