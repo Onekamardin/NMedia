@@ -1,13 +1,10 @@
 package com.example.nmedia.fragment
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -33,13 +30,18 @@ class NewPostFragment : Fragment() {
             val newContent = binding.edit.text.toString().trim()
             if (newContent.isNotEmpty()) {
                 val newPost = Post(
-                    id = 0L,
-                    author = "User",
+                    id = 0,
+                    authorId = 1L,
                     content = newContent,
-                    published = 0,
-                    authorAvatar = ""
+                    published = System.currentTimeMillis(),
+                    likedByMe = false,
+                    likes = 0,
+                    attachment = null
                 )
+
                 viewModel.saveContent(newPost)
+
+                findNavController().navigateUp()
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -47,10 +49,6 @@ class NewPostFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-        viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
-            findNavController().navigateUp()
         }
 
         binding.cancel.setOnClickListener {
@@ -64,4 +62,3 @@ class NewPostFragment : Fragment() {
         var Bundle.contentArg by StringArg
     }
 }
-

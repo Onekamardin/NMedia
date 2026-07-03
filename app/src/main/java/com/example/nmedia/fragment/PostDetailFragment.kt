@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.nmedia.R
 import com.example.nmedia.databinding.FragmentPostDetailBinding
+import com.example.nmedia.dto.AttachmentType
 import com.example.nmedia.dto.Post
+import com.example.nmedia.model.PostWithAuthor
 import com.example.nmedia.viewmodel.PostViewModel
 
 class PostDetailFragment : Fragment() {
@@ -41,7 +43,7 @@ class PostDetailFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(PostViewModel::class.java)
 
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            val post = state.posts.find { it.id == postId }
+            val post = state.posts.find { it.post.id == postId }
             post?.let { setupPost(it) }
         }
         setupClickListeners()
@@ -49,21 +51,34 @@ class PostDetailFragment : Fragment() {
 
 
 
-    private fun setupPost(updatedPost: Post) {
-        binding.apply {
-            author.text = updatedPost.author
-            published.text = updatedPost.published.toString()
-            content.text = updatedPost.content
-            likes.text = formatCount(updatedPost.likes)
-            shares.text = formatCount(updatedPost.shareCount)
-            ivLike.isChecked = updatedPost.likedByMe
+    private fun setupPost(pwa: PostWithAuthor) {
+        val post = pwa.post
+        val author = pwa.author
 
-            videoContainer.visibility = if (!updatedPost.video.isNullOrBlank()) View.VISIBLE else View.GONE
-            if (!updatedPost.video.isNullOrBlank()) {
-                playButton.setOnClickListener { openVideo(updatedPost.video!!) }
+        binding.apply {
+            author.name = author.name
+
+            published.text = post.published.toString()
+            content.text = post.content
+            likes.text = formatCount(post.likes)
+
+            shares.text = formatCount(0)
+
+            ivLike.isChecked = post.likedByMe
+
+            val hasVideo = post.attachment?.type == AttachmentType.VIDEO
+            videoContainer.visibility = if (hasVideo) View.VISIBLE else View.GONE
+
+            if (hasVideo && post.attachment != null) {
+                playButton.setOnClickListener {
+                    openVideo(post.attachment!!.url)
+                }
+            } else {
+                playButton.setOnClickListener { }
             }
         }
     }
+
 
     private fun setupClickListeners() {
         binding.apply {
